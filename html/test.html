@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<title>看拼音写汉字</title>
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/layui.css">
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/result.css">
+	<script src="https://cdn.bzy.ai/dafang/jquery.min.js"></script>
+	<script src="https://cdn.bzy.ai/dafang/layui.js"></script>
+	<script>
+		layui.use('layer', function () {
+			var $ = layui.jquery,
+				layer = layui.layer,
+				element = layui.element;
+			var jiazai = layer.load(1, {
+				shade: [0.6, '#000']
+			});
+			document.onreadystatechange = function () {
+				if (document.readyState == "complete") {
+					layer.closeAll();
+				}
+			}
+		});
+	</script>
+	<style>
+		*,
+		:after,
+		:before {
+			box-sizing: border-box;
+		}
+
+		@font-face {
+			font-family: 'py';
+			src: url('https://cdn.3415.cn/py.ttf') format('truetype');
+		}
+
+		@font-face {
+			font-family: 'tyz';
+			src: url('https://cdn.3415.cn/tyz/tyz.ttf') format('truetype'), url('https://cdn.3415.cn/tyz/tyz.woff2') format('woff2'), url('https://cdn.3415.cn/tyz/tyz.woff') format('woff'), url('https://cdn.3415.cn/tyz/tyz.eot') format('eot'), url('https://cdn.3415.cn/tyz/tyz.svg') format('svg');
+		}
+
+		/*fm style*/
+		#frame2 {
+			width: 180mm;
+			height: 250mm;
+			overflow: hidden;
+			position: relative;
+			font-family: "Microsoft Yahei", "Arial";
+			margin: 0 auto;
+			color: #000;
+		}
+
+		#frame2 .fm_title {
+			position: absolute;
+			width: 120mm;
+			height: 45mm;
+			left: 33mm;
+			top: 60mm;
+			text-align: center;
+			font-size: 50px;
+			line-height: 55px;
+			overflow: hidden;
+		}
+
+		#frame2 .fm_info {
+			position: absolute;
+			width: 80mm;
+			left: 51mm;
+			bottom: 60mm;
+			font-size: 25px;
+			text-align: center;
+		}
+
+		#frame2 .fm_info p {
+			padding: 3mm;
+			display: block;
+			overflow: hidden;
+		}
+
+		#frame2 .fm_info .fm_info_name {
+			text-align: center;
+			float: left;
+		}
+
+		#frame2 .fm_info .fm_info_u {
+			border-bottom: #000 1px solid;
+			letter-spacing: 0.5mm;
+			text-align: center;
+			width: 50mm;
+			height: 27px;
+			line-height: 27px;
+			display: inline-block;
+		}
+
+		#frame2 .fm_copyright {
+			position: absolute;
+			width: 80mm;
+			left: 51mm;
+			bottom: 20mm;
+			font-size: 14px;
+			text-align: center;
+			font-family: "Microsoft Yahei";
+		}
+
+		.frame {
+			width: 210mm;
+			margin: 0 auto;
+			font-size: 16px;
+		}
+
+		.mb0 {
+			margin-bottom: 0 !important;
+		}
+
+		.mb5 {
+			margin-bottom: 5px;
+		}
+
+		.mt5 {
+			margin-top: 5px;
+		}
+
+		.mt10 {
+			margin-top: 10px;
+		}
+
+		#target {
+			width: 210mm;
+			height: 297mm;
+			margin: 0 auto;
+			border: #bbb 0.2mm solid;
+			padding: 13mm 14.6mm 13mm 14.6mm;
+			box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+			position: relative;
+			page-break-after: always;
+		}
+
+		#frame {
+			display: block;
+			margin: 0 auto;
+		}
+
+		ul {
+			padding: 0;
+			margin: 0;
+			overflow: hidden;
+		}
+
+		li {
+			float: left;
+		}
+
+		.bh {
+			text-align: center;
+			border-left: #999 0.2mm solid;
+			float: left;
+		}
+
+		.bh li {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+			display: block;
+			width: 15mm;
+			height: 15mm;
+			line-height: 15.5mm;
+			background: url("data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(0,0,0)' opacity='0.4' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(0,0,0)' opacity='0.4' fill-opacity='0'/></svg>") no-repeat;
+			background-size: 15mm 15mm;
+			font-size: 11mm;
+			text-align: center;
+			color: #000;
+			font-family: "Microsoft Yahei", "Arial";
+			border-top: #999 0.2mm solid;
+			border-right: #999 0.2mm solid;
+			border-bottom: #999 0.2mm solid;
+		}
+
+		.bh li:hover {
+			background-color: #1E9FFF;
+			color: #fff;
+			cursor: pointer;
+		}
+
+		.block .block_in:last-child {
+			margin-right: 0;
+		}
+
+		#frame .block:last-child {
+			margin-bottom: 0;
+		}
+
+		.block {
+			display: block;
+			clear: both;
+			overflow: hidden;
+			margin-bottom: 2.8mm;
+		}
+
+		.block_in {
+			float: left;
+			margin-right: 2.8mm;
+		}
+
+		.class_title {
+			width: 100%;
+			display: block;
+			overflow: hidden;
+			clear: both;
+			font-family: "Microsoft Yahei", "Arial";
+			height: 15mm;
+		}
+
+		.class_title li {
+			width: 100%;
+			height: 10mm;
+			margin-top: 4mm;
+			line-height: 10mm;
+			font-size: 21px;
+			color: #000;
+			display: inline-block;
+			float: unset;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		.li_mt0 {
+			height: 11mm !important;
+		}
+
+		.li_mt0 li {
+			margin-top: 0 !important;
+		}
+
+		.py {
+			text-align: center;
+			overflow: hidden;
+			clear: both;
+			border-left: #999 0.2mm solid;
+		}
+
+		.py li {
+			padding: 0;
+			width: 15mm;
+			height: 7.5mm;
+			line-height: 6.7mm;
+			border-top: #999 0.2mm solid;
+			border-right: #999 0.2mm solid;
+			overflow: hidden;
+			font-size: 5.3mm;
+			text-align: center;
+			letter-spacing: -1px;
+			color: #000;
+			font-family: "Microsoft Yahei", "Arial";
+			background: url("data:image/svg+xml,<svg width='80px' height='40px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M1 13 L80 13' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(0,0,0)' opacity='0.4' fill-opacity='0'/><path d='M1 27 L80 27' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(0,0,0)' opacity='0.4' fill-opacity='0'/></svg>") no-repeat;
+			background-size: 15mm 7.5mm;
+		}
+
+		.py li:hover {
+			background-color: #f30;
+			color: #fff;
+			cursor: pointer;
+		}
+
+		.py_s {
+			font-size: 4.8mm !important;
+			letter-spacing: -2px !important;
+		}
+
+		.bh li.none,
+		.py li.none {
+			width: 5mm;
+			background: none;
+			border: none;
+		}
+
+		.yj {
+			width: 180mm;
+			margin: 0 auto;
+			overflow: hidden;
+			position: absolute;
+			bottom: 14mm;
+			left: 14.5mm;
+			color: #000;
+			border-top: #000 0.2mm solid;
+			padding-top: 1.5mm;
+		}
+
+		.yj .yj_l {
+			width: 130mm;
+			float: left;
+		}
+
+		.yj .yj_r {
+			width: 50mm;
+			float: right;
+			text-align: right;
+		}
+
+		.header {
+			width: 180mm;
+			height: 8mm;
+			line-height: 8mm;
+			display: block;
+			border-bottom: #000 1px solid;
+			margin-bottom: 2.5mm;
+			overflow: hidden;
+			color: #000;
+		}
+
+		.header .header_l {
+			float: left;
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		.header .header_r {
+			float: right;
+			text-align: right;
+			font-size: 14px;
+		}
+
+		.span_u {
+			letter-spacing: 0.5mm;
+			text-align: left;
+			display: inline-block;
+			vertical-align: bottom;
+		}
+
+		.span_u:nth-child(1) {
+			min-width: 15mm;
+		}
+
+		.span_u:nth-child(2) {
+			min-width: 10mm;
+		}
+
+		.span_u:nth-child(3) {
+			min-width: 10mm;
+		}
+
+		.print {
+			display: block;
+			width: 80px;
+			position: fixed;
+			top: 300px;
+			left: 50%;
+			margin-left: 410px;
+			z-index: 999;
+		}
+
+		#wrap {
+			background: #fff;
+		}
+
+		.layui-layer-content {
+			margin: 0 auto;
+		}
+
+		@media print {
+			#target {
+				box-shadow: none;
+				border: none;
+			}
+
+			.py li {
+				background-color: unset !important;
+				color: #000 !important;
+			}
+
+			.bh li {
+				background-color: unset !important;
+				color: #000 !important;
+			}
+
+			.frame,
+			.print {
+				display: none;
+			}
+		}
+
+		.py li:hover {
+			background-color: #f30;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="print">
+		<a href="javascript:doPrint();" class="layui-btn layui-btn-normal" rel="nofollow">立即打印</a>
+	</div>
+
+
+	<div id="wrap">
+		<!-- wrap start -->
+		{%- for page in pages -%}
+		<div id="target">
+			<!-- target start -->
+			<div class="header">
+				<div class="header_l">{{page.title}}</div>
+				<div class="header_r">
+					姓名：<span class='span_u'></span>&nbsp;&nbsp;&nbsp;班级：<span
+						class='span_u'></span>&nbsp;&nbsp;&nbsp;学号：<span class='span_u'></span> </div>
+			</div>
+
+			<div id="frame">
+				<!-- frame start -->
+				{%- for l in page.lines -%}
+				<div class='block'>
+					{%- for c in l -%}
+					<div class='block_in'>
+
+						<ul class='py'>
+							{%- for z in c -%}
+							<li id='py_1'>{{z}}</li>
+							{% endfor %}
+						</ul>
+						<ul class='bh'>
+							{%- for z in c -%}
+							<li id='hz_1'></li>
+							{% endfor %}
+						</ul>
+
+					</div>
+					{% endfor %}
+				</div>
+				{% endfor %}
+
+			</div><!-- frame end -->
+
+			<div class="yj">
+				<div class='yj_l'></div>
+				<div class="yj_r">第{{page['cur']}}页
+					/ 共{{total_page}}页 </div>
+			</div>
+
+		</div><!-- target end -->
+		{% endfor %}
+
+	</div><!-- wrap end -->
+
+
+	<script src="https://cdn.bzy.ai/dafang/print.js"></script>
+	<script>
+		function doPrint() {
+			Print('#wrap');
+		}
+	</script>
+
+</body>
+
+</html>

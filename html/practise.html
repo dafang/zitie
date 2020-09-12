@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<title>看汉字和拼音抄写练习</title>
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/layui.css">
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.bzy.ai/dafang/result.css">
+	<script src="https://cdn.bzy.ai/dafang/jquery.min.js"></script>
+	<script src="https://cdn.bzy.ai/dafang/layui.js"></script>
+	<script>
+		layui.use('layer', function () {
+			var $ = layui.jquery,
+				layer = layui.layer,
+				element = layui.element;
+			var jiazai = layer.load(1, {
+				shade: [0.6, '#000']
+			});
+			document.onreadystatechange = function () {
+				if (document.readyState == "complete") {
+					layer.closeAll();
+				}
+			}
+		});
+	</script>
+	<style>
+		*,
+		:after,
+		:before {
+			box-sizing: border-box;
+		}
+
+		@font-face {
+			font-family: 'py';
+			src: url('https://cdn.bzy.ai/dafang/py.ttf') format('truetype');
+		}
+
+		.layui-colorpicker,
+		.layui-colorpicker-main {
+			box-sizing: unset;
+		}
+
+		.cursor {
+			cursor: pointer;
+		}
+
+		.mb5 {
+			margin-bottom: 5px;
+		}
+
+		.mt5 {
+			margin-top: 5px;
+		}
+
+		.mt10 {
+			margin-top: 10px;
+		}
+
+		.span10 {
+			display: inline-block;
+			float: left;
+			height: 38px;
+			line-height: 38px;
+			padding: 0 10px;
+			border: #e6e6e6 1px solid;
+			border-right: 0;
+			background: #fbfbfb;
+			border-radius: 2px;
+			color: #000;
+		}
+
+		.span17 {
+			display: inline-block;
+			float: left;
+			height: 38px;
+			line-height: 38px;
+			padding: 0 17px;
+			border: #e6e6e6 1px solid;
+			border-right: 0;
+			background: #fbfbfb;
+			border-radius: 2px;
+			color: #000;
+		}
+
+		#target {
+			width: 210mm;
+			height: 297mm;
+			margin: 20px auto 0 auto;
+			border: #bbb 1px solid;
+			box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+			position: relative;
+			text-align: center;
+			background-size: 210mm 297mm;
+		}
+
+		#frame {
+			display: inline-block;
+			top: 50%;
+			transform: translateY(-50%);
+			position: relative;
+		}
+
+		.framein {
+			background-color: #fff;
+		}
+
+		#target:first-child {
+			margin-top: 0;
+		}
+
+		ul {
+			padding: 0;
+			margin: 0;
+		}
+
+		li {
+			float: left;
+		}
+
+		.bh {
+			text-align: center;
+			overflow: hidden;
+			border-left: #999 1px solid;
+		}
+
+		.bh li {
+			padding: 0;
+			width: 57px;
+			height: 57px;
+			line-height: 57px;
+			border-top: #999 1px solid;
+			border-right: #999 1px solid;
+			overflow: hidden;
+			text-align: center;
+			background: url("data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>") no-repeat;
+			background-size: 57px 57px;
+			cursor: pointer;
+			color: #ddd;
+		}
+
+		.bh li.shouzi {
+			color: #000;
+		}
+
+		.frame .bh:nth-last-of-type(1) li {
+			border-bottom: #999 1px solid
+		}
+
+		.zd_text {
+			display: none;
+			border-left: #999 1px solid;
+			float: left;
+			width: 446px;
+			padding: 0 5px;
+			height: 29px;
+			line-height: 29px;
+			overflow: hidden;
+			cursor: pointer;
+			font-size: 14px;
+			text-align: left;
+		}
+
+		.header {
+			width: 685px;
+			overflow: hidden;
+			color: #000;
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			height: 50px;
+			z-index: 9999;
+		}
+
+		.header .header_l {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			font-size: 20px;
+			font-family: "font_1", "Microsoft Yahei";
+		}
+
+		.header .header_r {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			font-size: 14px;
+			font-family: "font_2", "Microsoft Yahei";
+		}
+
+		.span_u {
+			letter-spacing: 2px;
+			text-align: left;
+			display: inline-block;
+			vertical-align: bottom;
+		}
+
+		.span_u:nth-child(1) {
+			min-width: 60px;
+		}
+
+		.span_u:nth-child(2) {
+			min-width: 40px;
+		}
+
+		.span_u:nth-child(3) {
+			min-width: 40px;
+		}
+
+		.yj {
+			width: 685px;
+			margin: 0 auto;
+			overflow: hidden;
+			color: #000;
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			height: 50px;
+			z-index: 9999;
+		}
+
+		.yj .yj_l {
+			position: absolute;
+			left: 0;
+			top: 0;
+			font-size: 14px;
+			font-family: "font_3", "Microsoft Yahei";
+		}
+
+		.yj .yj_r {
+			position: absolute;
+			right: 0;
+			top: 0;
+			font-size: 14px;
+			font-family: "font_4", "Microsoft Yahei";
+		}
+
+		.print {
+			display: block;
+			position: fixed;
+			top: 10px;
+			left: 50%;
+			margin-left: 410px;
+			z-index: 999;
+		}
+
+		.print_l {
+			display: block;
+			position: fixed;
+			top: 10px;
+			right: 50%;
+			margin-right: 410px;
+			z-index: 999;
+			text-align: right;
+			width: 130px;
+		}
+
+		#wrap {
+			background: #fff;
+			font-size: 11mm;
+		}
+
+		.layui-layer-content {
+			margin: 0 auto;
+		}
+
+		@media print {
+			#target {
+				box-shadow: none;
+				border: none;
+			}
+
+			.print,
+			.print_l {
+				display: none;
+			}
+		}
+
+		.py {
+			text-align: center;
+			overflow: hidden;
+			clear: both;
+			border-left: #999 1px solid;
+		}
+
+		.py li {
+			padding: 0;
+			width: 57px;
+			height: 29px;
+			line-height: 26px;
+			border-top: #999 1px solid;
+			border-right: #999 1px solid;
+			overflow: hidden;
+			font-size: 5.3mm;
+			text-align: center;
+			color: #ddd;
+			font-family: "py";
+			background: url("data:image/svg+xml,<svg width='80px' height='40px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M1 13 L80 13' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M1 27 L80 27' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>") no-repeat;
+			background-size: 57px 30px;
+			letter-spacing: -1px;
+		}
+
+		.py li.shoupin {
+			color: #000;
+			cursor: pointer;
+		}
+
+		.py li.tianpin {
+			color: #ddd;
+			cursor: pointer;
+		}
+
+		.py_s {
+			font-size: 4.8mm !important;
+			letter-spacing: -2px !important;
+		}
+
+		.move {
+			text-align: center;
+			width: 92px;
+			margin-top: 10px;
+		}
+
+		.move a {
+			width: 30px;
+			height: 30px;
+			line-height: 30px;
+			display: inline-block;
+		}
+
+		.move i {
+			height: 30px;
+			line-height: 30px;
+			font-size: 30px;
+			color: #666;
+		}
+
+		.move a:hover i {
+			color: #f30;
+		}
+
+		.move .move1 {
+			display: block;
+			height: 30px;
+		}
+
+		.move .move2 {
+			display: block;
+			height: 30px;
+		}
+
+		.move .move2 a {
+			float: left;
+		}
+
+		.move .move3 {
+			display: block;
+			height: 40px;
+		}
+	</style>
+	<link id="load_font" rel="stylesheet/less" href="https://cdn.bzy.ai/dafang/font.less?fdafdaf">
+	<!-- 页眉页脚 -->
+	<style id="f_1"></style>
+	<style id="f_2"></style>
+	<style id="f_3"></style>
+	<style id="f_4"></style>
+	<!-- 页眉页脚 -->
+	<script src="https://cdn.bzy.ai/dafang/less.min.js"></script>
+	<script>
+		var font_name = "tyz";
+		less.modifyVars({
+			font_name: font_name
+		});
+	</script>
+</head>
+
+<body>
+
+
+	<div class="print_l">
+		<div style="overflow:hidden;">
+			<span class="span17">首字颜色</span>
+			<div id="color_shouzi" style="float:left;"></div>
+		</div>
+		<div style="margin-top:0px;overflow:hidden;">
+			<span class="span17">填字颜色</span>
+			<div id="color_tianzi" style="float:left;"></div>
+		</div>
+		<div style="margin-top:10px;overflow:hidden;">
+			<span class="span10">首个拼音色</span>
+			<div id="color_shoupin" style="float:left;"></div>
+		</div>
+		<div style="margin-top:0px;overflow:hidden;">
+			<span class="span10">填充拼音色</span>
+			<div id="color_tianpin" style="float:left;"></div>
+		</div>
+		<div style="margin-top:10px;overflow:hidden;">
+			<span class="span17">格子背景</span>
+			<div id="framein" style="float:left;"></div>
+		</div>
+		<div style="margin-top:10px;overflow:hidden;">
+			<span class="span17">边框颜色</span>
+			<div id="color_border" style="float:left;"></div>
+		</div>
+		<div style="margin-top:0px;overflow:hidden;">
+			<span class="span10">内虚线颜色</span>
+			<div id="svg_color" style="float:left;"></div>
+		</div>
+		<div style="margin-top:10px;overflow:hidden;">
+			<span class="span10">页眉页脚色</span>
+			<div id="color_yemei" style="float:left;"></div>
+		</div>
+	</div>
+
+	<div class="print">
+		<div class="layui-btn-group" style="display:block;margin-bottom:10px;margin-left:0;">
+			<a href="javascript:doPrint();" class="layui-btn layui-btn-sm layui-btn-normal" rel="nofollow">立即打印</a>
+		</div>
+
+		<div>
+			<div class="layui-form" style="margin-top:10px;">
+				<div class="layui-form-item" style="margin-bottom:0;">
+					<div class="layui-inline" style="margin-bottom:0;margin-right:0;">
+						<div class="layui-input-inline" style="width:130px;margin-right:0;">
+							<select name="s_font" id="s_font" lay-filter="s_font">
+								<option value="">选择字体</option>
+								<option value='tyz' selected>田英章楷书</option>
+								<option value='tyzxs'>田英章行书</option>
+								<option value='pzh'>庞中华钢笔</option>
+								<option value='jdxsj'>经典行书简</option>
+								<option value='kt'>楷体</option>
+								<option value='ybks'>硬笔楷书</option>
+								<option value='ybxs'>硬笔行书</option>
+								<option value='fangsong'>仿宋</option>
+								<option value='yk2'>硬楷2</option>
+								<option value='lishu'>隶书</option>
+								<option value='cqb'>隶书2</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div style="overflow:hidden;margin-top:5px;">
+				<input type="text" id="zdy_font" lay-verify="zd_font" autocomplete="off" class="layui-input"
+					style="text-align:center;width:130px;padding:0;float:left;height:30px;font-size:12px;"
+					placeholder="输入电脑上的字体名称">
+			</div>
+			<div style="overflow:hidden;margin-top:0;">
+				<button class="layui-btn layui-btn-sm" onclick="javascript:zdy_font();" style="width:130px;">确定</button>
+			</div>
+			<div style="margin-top:10px;overflow:hidden;">
+				<span
+					style="display:block;height:30px;line-height:30px;border:#e6e6e6 1px solid;background:#fbfbfb;border-radius:2px;color:#000;text-align:center;float:left;padding:0 6px;">汉字字号</span>
+				<div class="layui-btn-group">
+					<button class="layui-btn layui-btn-sm" onclick="javascript:font(1);" style="width:30px;"><i
+							class="fa fa-plus"></i></button>
+					<button class="layui-btn layui-btn-sm" onclick="javascript:font(2);" style="width:30px;"><i
+							class="fa fa-minus"></i></button>
+				</div>
+			</div>
+			<div style="margin-top:5px;overflow:hidden;">
+				<span
+					style="display:block;height:30px;line-height:30px;border:#e6e6e6 1px solid;background:#fbfbfb;border-radius:2px;color:#000;text-align:center;float:left;padding:0 6px;">汉字行高</span>
+				<div class="layui-btn-group">
+					<button class="layui-btn layui-btn-sm" onclick="javascript:line_height(1);" style="width:30px;"><i
+							class="fa fa-plus"></i></button>
+					<button class="layui-btn layui-btn-sm" onclick="javascript:line_height(2);" style="width:30px;"><i
+							class="fa fa-minus"></i></button>
+				</div>
+			</div>
+			<div style="margin-top:5px;overflow:hidden;">
+				<span
+					style="display:block;height:30px;line-height:30px;border:#e6e6e6 1px solid;background:#fbfbfb;border-radius:2px;color:#000;text-align:center;float:left;padding:0 6px;">拼音字号</span>
+				<div class="layui-btn-group">
+					<button class="layui-btn layui-btn-sm" onclick="javascript:pyfont(1);" style="width:30px;"><i
+							class="fa fa-plus"></i></button>
+					<button class="layui-btn layui-btn-sm" onclick="javascript:pyfont(2);" style="width:30px;"><i
+							class="fa fa-minus"></i></button>
+				</div>
+			</div>
+		</div>
+		<br>
+		<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-normal" rel="nofollow" style="padding:0 10px;"
+			id="upload_zd">　上传背景　</a><br>
+		<a href="javascript:clear_bgimg();" class="layui-btn layui-btn-sm" rel="nofollow"
+			style="padding:0 10px;">　清空背景　</a>
+		<div class="move">
+			<span class="move1"><a href="javascript:move(1);" title="向上" rel="nofollow"><i
+						class="fa fa-arrow-up"></i></a></span>
+			<span class="move2">
+				<a href="javascript:move(2);" title="向左" rel="nofollow"><i class="fa fa-rotate-270 fa-arrow-up"></i></a>
+				<a href="javascript:reset_move();" title="复位" rel="nofollow"><i class="fa fa-dot-circle-o"></i></a>
+				<a href="javascript:move(3);" title="向右" rel="nofollow"><i class="fa fa-rotate-90 fa-arrow-up"></i></a>
+			</span>
+			<span class="move3"><a href="javascript:move(4);" title="向下" rel="nofollow"><i
+						class="fa fa-arrow-down"></i></a></span>
+		</div>
+	</div>
+
+	<div id="wrap">
+		<!-- wrap start -->
+		{%- for page in pages -%}
+		<div id="target" class="target">
+			<!-- target start -->
+
+			<div class="header">
+				<div class="header_l">{{page.title}}</div>
+				<div class="header_r">
+					姓名：<span class='span_u'></span>&nbsp;&nbsp;&nbsp;班级：<span
+						class='span_u'></span>&nbsp;&nbsp;&nbsp;学号：<span class='span_u'></span> </div>
+			</div>
+
+			<div id="frame" class="frame">
+				<!-- frame end -->
+
+				<div id="framein" class="framein">
+					{%- for line in page.lines -%}
+					<ul class='py' id='py_1'>
+						{%- for w in line -%}
+						<li class='shoupin' id='pinyin_1_1'>{{w.py}}
+						</li>
+						{% endfor %}
+					</ul>
+					<ul class='bh row_1 bh_1' id='bh'>
+						{%- for w in line -%}
+						<li class='shouzi' id='ziid_1_1_1'>{{w.hz}}</li>
+						{% endfor %}
+					</ul>
+					{% endfor %}
+				</div><!-- framein -->
+
+			</div><!-- frame start -->
+
+			<div class="yj">
+				<div class='yj_l'></div>
+				<div class="yj_r">第{{page.cur}}页
+					/ 共{{total_page}}页 </div>
+			</div>
+
+		</div><!-- target end -->
+		{% endfor %}
+
+	</div><!-- wrap end -->
+
+	<input type="hidden" id="ls_svg_color" value="204,204,204">
+	<input type="hidden" id="font_size" value="11">
+	<input type="hidden" id="font_size_py" value="5.3">
+	<input type="hidden" id="color_border" value="#999">
+	<input type="hidden" id="str_total" value="165">
+	<input type="hidden" id="margin_top">
+
+	<script src="https://cdn.bzy.ai/dafang/print.js"></script>
+	<script>
+		layui.use(['layer', 'form'], function () {
+			var layer = layui.layer;
+			var form = layui.form;
+			form.on('select(s_font)', function (data) {
+				var f_name = data.value;
+				set_font(f_name);
+			});
+		});
+
+		function set_font(id) {
+			var font_name = id;
+			if (font_name) {
+				less.modifyVars({
+					font_name: id
+				});
+				$(".bh").css("font-family", id);
+			}
+		}
+
+		function font(type) {
+			var num = document.getElementById("font_size").value;
+			if (type == 1) {
+				num = parseFloat(num) + 0.5;
+			} else {
+				num = num - 0.5;
+			}
+			if (num < 9) {
+				num = 9;
+			}
+			if (num > 15) {
+				num = 15;
+			}
+			document.getElementById("font_size").value = num;
+			document.getElementById("wrap").style.fontSize = num + "mm";
+		}
+
+		function line_height(type) {
+			var num = $(".bh li").css("line-height").replace(new RegExp("px", "g"), "");
+			if (type == 1) {
+				num++;
+			} else {
+				num--;
+			}
+			if (num < 20) {
+				num = 20;
+			}
+			if (num > 80) {
+				num = 80;
+			}
+			$(".bh li").css("line-height", num + "px");
+		}
+
+		function phelp() {
+			layer.open({
+				type: 2,
+				title: false,
+				shade: [0.7, '#000'],
+				closeBtn: 1,
+				area: ['880px', '804px'],
+				shadeClose: true,
+				content: '#',
+				scrollbar: true,
+				fixed: false,
+				offset: ['50']
+			});
+		}
+
+		function help_1() {
+			layer.open({
+				type: 1,
+				title: false,
+				shade: [0.7, '#000'],
+				closeBtn: 1,
+				area: ['750px', '570px'],
+				shadeClose: true,
+				content: '<img src="#">',
+				scrollbar: true,
+				fixed: false,
+				offset: ['50']
+			});
+		}
+
+		function doPrint() {
+			Print('#wrap')
+		}
+
+		var gezi = new Array(
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><circle cx='40' cy='40' r='30' stroke-dasharray='3,3' stroke-width='1' fill='none' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><circle cx='40' cy='40' r='30' stroke-dasharray='3,3' stroke-width='1' fill='none' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><circle cx='40' cy='40' r='30' stroke-dasharray='3,3' stroke-width='1' fill='none' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><circle cx='40' cy='40' r='30' stroke-dasharray='3,3' stroke-width='1' fill='none' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='17.6' y='18' width='44' height='44' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='17.6' y='18' width='44' height='44' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='17.6' y='18' width='44' height='44' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"data:image/svg+xml,<svg width='80px' height='80px' version='1.1' xmlns='http://www.w3.org/2000/svg'><path d='M-1 -1 L80 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-1 81 L80 0' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M-2 40 L80 40' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><path d='M40 -2 L40 80' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='27' y='27' width='26' height='26' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/><rect x='17.6' y='18' width='44' height='44' stroke-dasharray='3,3' stroke-width='1' stroke='rgb(204,204,204)' opacity='1' fill-opacity='0'/></svg>",
+			"",
+		);
+
+		function hexToRgb(hex) {
+			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			return result ? parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) : null;
+		}
+
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#svg_color',
+				color: "#ccc",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					var oldcolor = document.getElementById("ls_svg_color").value;
+					var newcolor = hexToRgb(color);
+					var str_total = document.getElementById("str_total").value;
+					for (i = 1; i <= str_total; i++) {
+						for (j = 1; j <= 1; j++) {
+							for (k = 1; k <= 12; k++) {
+								var dd = document.getElementById("ziid_" + i + "_" + j + "_" + k);
+								var dd_css = document.defaultView.getComputedStyle(dd, null);
+								var this_bg = dd_css.backgroundImage;
+								var newbg = this_bg.replace(new RegExp(oldcolor, 'g'), newcolor);
+								dd.style.backgroundImage = newbg;
+							}
+						}
+					}
+					//py
+					var py_bg_old = $("ul.py li").css("background-image");
+					var new43 = py_bg_old.replace(new RegExp(oldcolor, 'g'), newcolor);
+					$(".py li").css("background-image", new43);
+
+					document.getElementById("ls_svg_color").value = hexToRgb(color);
+				}
+			});
+		});
+
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_border',
+				color: "#999",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".bh li").css("border-color", color);
+					$(".py li").css("border-color", color);
+					$(".py").css("border-left-color", color);
+					$(".bh").css("border-left-color", color);
+					$(".frame").css("border-bottom-color", color);
+					$(".bihua_info").css("border-left-color", color);
+					$(".display_bihua").css("border-left-color", color);
+					$(".display_bihua").css("border-right-color", color);
+					$(".bihua_block").css("border-top-color", color);
+					$(".bihua_block").css("border-right-color", color);
+					$(".zd_text").css("border-left-color", color);
+				}
+			});
+		});
+
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#framein',
+				color: "#fff",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".framein").css("background", color);
+				}
+			});
+		});
+
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_bihua',
+				color: "#000",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".normal").css("fill", color);
+				}
+			});
+		});
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_shouzi',
+				color: "#000",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".shouzi").css("color", color);
+				}
+			});
+		});
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_tianzi',
+				color: "#ddd",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".tianzi").css("color", color);
+				}
+			});
+		});
+
+		function pyfont(type) {
+			var num = document.getElementById("font_size_py").value;
+			if (type == 1) {
+				num = parseFloat(num) + 0.1;
+			} else {
+				num = num - 0.1;
+			}
+			if (num < 4) {
+				num = 4;
+			}
+			if (num > 5.8) {
+				num = 5.8;
+			}
+			document.getElementById("font_size_py").value = num;
+			$(".py li").css("font-size", num + "mm");
+		}
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_shoupin',
+				color: "#000",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".shoupin").css("color", color);
+				}
+			});
+		});
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_tianpin',
+				color: "#ddd",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".tianpin").css("color", color);
+				}
+			});
+		});
+		layui.use('colorpicker', function () {
+			var colorpicker = layui.colorpicker;
+			colorpicker.render({
+				elem: '#color_yemei',
+				color: "#000",
+				colors: ['#000', '#fff', '#666', '#888', '#999', '#aaa', '#bbb', '#ccc', '#ddd', '#eee',
+					'#8282f3', '#f00', '#f30', '#f60', '#f90', '#ffb3b3', '#ff8383', '#ea6262', '#e64747',
+					'#d72727', '#cb1010', '#00f', '#06f', '#229def', '#09f', '#057709', '#17821b',
+					'#2b952f', '#4caf50', '#58b05c', '#77da7b', '#91e795', '#b6ebb9'
+				],
+				predefine: true,
+				change: function (color) {
+					$(".header").css("color", color);
+					$(".header").css("border-color", color);
+					$(".yj").css("color", color);
+					$(".yj").css("border-color", color);
+				}
+			});
+		});
+
+		function clear_bgimg() {
+			$(".target").css("background-image", "none");
+		}
+
+		layui.use('upload', function () {
+			var upload = layui.upload;
+			upload.render({
+				elem: '#upload_zd',
+				accept: 'images',
+				url: '',
+				auto: false,
+				choose: function (obj) {
+					obj.preview(function (index, file, result) {
+						var bgimg = $(".target");
+						bgimg.css("background-image", "url(" + result + ")");
+					})
+				},
+				error: function (index, upload) {
+					layer.alert('上传失败！' + index);
+				}
+			});
+		})
+
+		function move(id) {
+			var buchang = 5;
+			if (id == 1) {
+				var num_top = $(".header").css("top").replace(new RegExp("px", "g"), "");
+				var num_bottom = $(".yj").css("bottom").replace(new RegExp("px", "g"), "");
+				var num_frame = $(".frame").css("margin-top").replace(new RegExp("px", "g"), "");
+				num_top -= buchang;
+				num_bottom = Number(num_bottom) + buchang;
+				num_frame -= buchang;
+				if (num_top > 0) {
+					$(".header").css("top", num_top + "px");
+					$(".yj").css("bottom", num_bottom + "px");
+					$(".frame").css("margin-top", num_frame + "px");
+				}
+			} else if (id == 2) {
+				var num_left_frame = $(".frame").css("margin-left").replace(new RegExp("px", "g"), "");
+				var num_left = $(".header").css("left").replace(new RegExp("px", "g"), "");
+				num_left_frame -= buchang * 2;
+				num_left -= buchang;
+				if (num_left > 345) {
+					$(".header").css("left", num_left + "px");
+					$(".frame").css("margin-left", num_left_frame + "px");
+					$(".yj").css("left", num_left + "px");
+				}
+			} else if (id == 3) {
+				var num_left_frame = $(".frame").css("margin-left").replace(new RegExp("px", "g"), "");
+				var num_left = $(".header").css("left").replace(new RegExp("px", "g"), "");
+				num_left_frame = Number(num_left_frame) + buchang * 2;
+				num_left = Number(num_left) + buchang;
+				if (num_left < 450) {
+					$(".header").css("left", num_left + "px");
+					$(".frame").css("margin-left", num_left_frame + "px");
+					$(".yj").css("left", num_left + "px");
+				}
+			} else if (id == 4) {
+				var num_top = $(".header").css("top").replace(new RegExp("px", "g"), "");
+				var num_bottom = $(".yj").css("bottom").replace(new RegExp("px", "g"), "");
+				var num_frame = $(".frame").css("margin-top").replace(new RegExp("px", "g"), "");
+				num_top = Number(num_top) + Number(buchang);
+				num_bottom -= buchang;
+				num_frame = Number(num_frame) + Number(buchang);
+				if (num_bottom > 0) {
+					$(".header").css("top", num_top + "px");
+					$(".yj").css("bottom", num_bottom + "px");
+					$(".frame").css("margin-top", num_frame + "px");
+				}
+			}
+		}
+
+		function reset_move() {
+			$(".header").css("top", document.getElementById("margin_top").value + "px");
+			$(".header").css("left", "50%");
+			$(".header").css("margin-left", "unset");
+			$(".yj").css("bottom", document.getElementById("margin_top").value + "px");
+			$(".yj").css("left", "50%");
+			$(".yj").css("margin-left", "unset");
+			$(".frame").css("margin-top", "unset");
+			$(".frame").css("margin-left", "unset");
+		}
+
+		function zdy_font() {
+			var font_name = document.getElementById("zdy_font").value;
+			if (font_name) {
+				$(".bh").css("font-family", font_name);
+			}
+		}
+
+		// 设置header,yj边距
+		var full_height = $("#frame").css("height");
+		var full_height = full_height.replace(new RegExp("px", "g"), "");
+		var margin_top = (1122.52 - full_height) / 2 - 60;
+		document.getElementById("margin_top").value = margin_top;
+		$(".header").css("top", margin_top + "px");
+		$(".yj").css("bottom", margin_top + "px");
+	</script>
+
+</body>
+
+</html>
