@@ -375,8 +375,6 @@
 </head>
 
 <body>
-
-
 	<div class="print_l">
 		<div style="overflow:hidden;">
 			<span class="span17">首字颜色</span>
@@ -414,6 +412,7 @@
 
 	<div class="print">
 		<div class="layui-btn-group" style="display:block;margin-bottom:10px;margin-left:0;">
+			<a href="javascript:showHelp();" class="layui-btn layui-btn-sm layui-btn-danger" rel="nofollow">打印帮助</a>
 			<a href="javascript:doPrint();" class="layui-btn layui-btn-sm layui-btn-normal" rel="nofollow">立即打印</a>
 		</div>
 
@@ -604,22 +603,7 @@
 			$(".bh li").css("line-height", num + "px");
 		}
 
-		function phelp() {
-			layer.open({
-				type: 2,
-				title: false,
-				shade: [0.7, '#000'],
-				closeBtn: 1,
-				area: ['880px', '804px'],
-				shadeClose: true,
-				content: '#',
-				scrollbar: true,
-				fixed: false,
-				offset: ['50']
-			});
-		}
-
-		function help_1() {
+		function showHelp() {
 			layer.open({
 				type: 1,
 				title: false,
@@ -627,7 +611,7 @@
 				closeBtn: 1,
 				area: ['750px', '570px'],
 				shadeClose: true,
-				content: '<img src="#">',
+				content: '<img src="https://cdn.bzy.ai/dafang/print.jpg">',
 				scrollbar: true,
 				fixed: false,
 				offset: ['50']

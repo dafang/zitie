@@ -389,6 +389,7 @@
 
 <body>
 	<div class="print">
+		<a href="javascript:showHelp();" class="layui-btn layui-btn-sm layui-btn-danger" rel="nofollow">打印帮助</a>
 		<a href="javascript:doPrint();" class="layui-btn layui-btn-normal" rel="nofollow">立即打印</a>
 	</div>
 
@@ -446,6 +447,21 @@
 	<script>
 		function doPrint() {
 			Print('#wrap');
+		}
+
+		function showHelp() {
+			layer.open({
+				type: 1,
+				title: false,
+				shade: [0.7, '#000'],
+				closeBtn: 1,
+				area: ['750px', '570px'],
+				shadeClose: true,
+				content: '<img src="https://cdn.bzy.ai/dafang/print.jpg">',
+				scrollbar: true,
+				fixed: false,
+				offset: ['50']
+			});
 		}
 	</script>
 
