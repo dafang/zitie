@@ -21,7 +21,8 @@ pip install jinja2
 
 ## 限制
 
-程序员奶爸自用，仅仅测试了 macOS；生成html后用浏览器（不支持 macOS 上的 chrome，请安装微软的 Edge浏览器）打印，或者打印的时候另存为 PDF。
+- 程序员奶爸自用，仅仅测试了 macOS；生成html后用浏览器（不支持 macOS 上的 chrome，请安装微软的 Edge浏览器）打印，或者打印的时候另存为 PDF
+- Windows上应该是可以直接用的，唯一要注意的就是 你的词语文件的编码 要是 UTF-8。很久不用Windows了，印象里Python在Windows对 GBK的编码支持会有乱码；当然如果你的字帖跑出来是乱码，那多半是编码的问题了。没计划解决Windows上的问题。
 
 ## 版权说明
 
