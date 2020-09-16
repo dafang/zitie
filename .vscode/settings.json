@@ -1,5 +1,5 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "/usr/local/bin/python"
+    "python.pythonPath": "/Users/wyatt/.pyenv/versions/3.8.5/bin/python"
 }

@@ -89,48 +89,50 @@ def genTest(phrasesStream):
     lines = []
     line = []
 
-    linesCnt = 0
-    curPage = 0
+    curPage = 1
     for h in phrasesStream:
         if h.startswith('#'):
-            if curPage > 0:  # the seconde page now；读到标题就换一个新页面，避免同一个页面出现两个标题
-                # start a new page
-                if len(line) > 0:  # 要换页了，当前行放进当前页中
+            if len(lines) > 0:
+                # 要换章节/页 了，保存当前页数据
+                if len(line) > 0:
                     lines.append(line)
+                pages, nextPageLines = pageAppend(title, pages, lines, curPage)
 
-                # lines 用于下一页
                 curPage = curPage + 1
-                pages, lines = pageAppend(title, pages, lines, curPage)
-
                 # 换新页了，临时变量复原
                 line = []
                 linesCnt = 0
+                lines = nextPageLines[0:]
 
-            title = h.strip('#')
+            title = h.strip('#')  # 设置新的标题
         else:
             py = lazy_pinyin(h, style=Style.TONE)
 
             if startNewline(line, py):  # 当前行放不下py了，换行
-                linesCnt = linesCnt + 1
                 lines.append(line)
 
                 line = [py]
+
+                if len(lines) > maxLines:
+                    # 要换页了，保存当前页数据
+                    pages, nextPageLines = pageAppend(
+                        title, pages, lines, curPage)
+                    curPage = curPage + 1
+
+                    # 换页
+                    lines = nextPageLines[0:]
             else:
                 line.append(py)
-
-            if linesCnt > maxLines:
-                # start new page
-                curPage = curPage + 1
-                pages, lines = pageAppend(title, pages, lines, curPage)
-
-                # 换页
-                linesCnt = 0
 
     # 上面的for循环，没把最后一行line放进去，这里补充进来
     if len(line) > 0:
         lines.append(line)
-    pages.append({"title": title, "lines": lines,
-                  "cur": curPage+1})  # last page
+    if len(lines) > 0:
+        pages, nextPageLines = pageAppend(
+            title, pages, lines, curPage)
+        if len(nextPageLines) > 0:
+            pages, nextPageLines = pageAppend(
+                title, pages, nextPageLines, curPage+1)
 
     with open('test.html', 'w') as fout:
         render_content = tpl.render(pages=pages, total_page=len(pages))
